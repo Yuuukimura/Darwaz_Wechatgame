@@ -44,6 +44,7 @@ cc.Class({
         },
         keyboradPower: 3,//按键的力度
         state: 0,//人物的平衡位置
+        BirdWeight:0, //鸟的重量
         preState: 0,
         leftKeyDown: false,
         rightKeyDown: false,
@@ -63,7 +64,12 @@ cc.Class({
     // onLoad () {},
 
     init() {
-        this.bikeState = false
+        this.bikeState = false;
+        this.BirdWeight = 0;
+        let aaa = this.node.getChildByName("BirdStay");
+        let bbb = this.node.getChildByName("flyaway");
+        aaa.active=false;
+        bbb.active=false;
     },
     start() {
         this.init()
@@ -140,6 +146,7 @@ cc.Class({
         }
 
     },
+
     update(dt) {
         let gm = window.GM;
         if (gm.gameStart && (!gm.gamePause) && (!gm.gameOver)) {
@@ -166,7 +173,7 @@ cc.Class({
                 // this.state+=Math.pow(this.node.rotation/10,2)/1000;
             }
             // if (gm) {
-                this.state +=gm.windManager.windPower * 0.2 * dt;
+                this.state = this.state + gm.windManager.windPower * 0.2 * dt + this.BirdWeight  *0.5* dt;
 
             // }
 
@@ -196,15 +203,10 @@ cc.Class({
         //window.GM.ropeMove.moveSpeed=-30;
         console.log("OnBombEvent");
         window.GM.ropeMove.moveSpeed = -20;//倒退的速度
-        this.scheduleOnce(function () {
-            // 这里的 this 指向 component
-            window.GM.ropeMove.moveSpeed = 20;
-        }, 3);
+        window.GM.distance-=10;
+    
     },
-    onBirdEvent(event) {
-        console.log("OnBirdEvent");
 
-    },
     onBicycleEvent(event) {
         console.log("OnBicycleEvent");
 
@@ -217,6 +219,45 @@ cc.Class({
             // 这里的 this 指向 component
             window.GM.ropeMove.moveSpeed = 20;
         }, 3);
+
+
+    },
+
+
+    onBirdEvent(event) {
+
+        console.log("OnBirdEvent111");
+         if (!window.GM.gameOver&& this.BirdWeight==0) {
+            let aaa = this.node.getChildByName("BirdStay");
+            let bbb = this.node.getChildByName("flyaway");
+
+            let Pos =cc.v2(window.GM.CollisionPos.x-this.node.x,window.GM.CollisionPos.y-this.node.y);
+
+            console.log("Pos",Pos.x,Pos.y);
+            aaa.setPosition(Pos.x,Pos.y);
+            aaa.active=true;
+            bbb.setPosition(Pos.x,Pos.y);
+            if(aaa.getPosition().x<0)
+            {this.BirdWeight =-1+Pos.x*0.01;
+            }
+        else {this.BirdWeight =1+Pos.x*0.01;}
+             
+            setTimeout(() => {
+            aaa.active=false;
+            bbb.active = true;
+            this.BirdWeight =0;
+            if(!window.GM.gameOver)
+            {var bi = bbb.getComponent("BirdItem");}
+            if (bi != null) {
+                    bi.Flyaway();
+                }
+        }, 2000);
+            if(!window.GM.gameOver)
+           {bbb.active = false;} 
+            
+
+
+        }
 
 
     },

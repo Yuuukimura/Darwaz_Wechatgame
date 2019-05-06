@@ -35,28 +35,38 @@ cc.Class({
 
     start () {
 
-    },
-    DoFallingAction(fallingTime)
-    {
-        let c=(Math.random()*cc.view.getVisibleSize().width/4)+cc.view.getVisibleSize().width/8;
 
-        let w=((Math.random()-0.5)*cc.view.getVisibleSize().height/5)+cc.view.getVisibleSize().height/4;
-        var action = cc.moveTo(fallingTime,cc.v2(c,w));
+    },
+    DoFlyingAction(fallingTime)
+    {     
+                    
+        var action = cc.moveTo(2,cc.v2(336,336));
         action.easing(cc.easeInOut(2));
         var destroySelf=cc.callFunc(function () {
-            setTimeout(() => {
-                // this.onBicyleKilled(newbomb);
-                if(cc.isValid(this.node)){
-                    console.log('bicyle timeout loss')
-                    this.node.destroy()
-                }
-                
-            }, 6000);
-            
+            if(cc.isValid(this.node)){
+                this.node.destroy()
+                console.log("destroy self");
+            }        
         },this);
         var seqAction = cc.sequence(action, destroySelf);
         var ac=this.node.runAction(seqAction);
 
     },
+    Flyaway(){
+     var action = cc.moveTo(2,cc.v2(cc.view.getVisibleSize().width+1000,436));
+        action.easing(cc.easeInOut(2));
+        var destroySelf=cc.callFunc(function () {
+            if(cc.isValid(this.node)&& this.active ){
+                this.active = false;
+                console.log("destroy self");
+            }        
+        },this);
+        var seqAction = cc.sequence(action, destroySelf);
+        var ac=this.node.runAction(seqAction);
+      
+
+    },
+
+    
     // update (dt) {},
 });

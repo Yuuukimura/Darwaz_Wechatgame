@@ -10,6 +10,7 @@
 var customWind = require("CustomWind");
 var ropeMove = require("RopeMove");
 var characterCon = require("CharacterController");
+var collisionpos = require("StickCollision");
 cc.Class({
     extends: cc.Component,
 
@@ -55,6 +56,12 @@ cc.Class({
                 default: null,
                 type: characterCon,
             },
+        CollisionPos:
+        {
+              default: null,
+              type:  collisionpos,
+
+        }
 
 
 
@@ -73,6 +80,7 @@ cc.Class({
         window.GM.distance=0;
         window.GM.windManager.windPower=0;
         window.GM.windManager.windText.string = "" + 0;
+    
     },
     start() {
         /*开启碰撞系统*/
